@@ -10,6 +10,8 @@
 @interface ViewController ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, weak)LSTextView
 *textView;
+@property (nonatomic, weak)UILabel *text;
+
 @end
 
 @implementation ViewController
@@ -22,9 +24,20 @@
   
     UIButton *btn = [UIButton buttonWithType:(UIButtonTypeCustom)];
     [self.view addSubview:btn];
+    [btn setTitle:@"选择图片" forState:(UIControlStateNormal)];
     btn.backgroundColor = [UIColor orangeColor];
     [btn addTarget:self action:@selector(openPhoto) forControlEvents:(UIControlEventTouchUpInside)];
     btn.frame = CGRectMake(0, CGRectGetMaxY(textView.frame), 100, 100);
+    UIButton *btn1 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+    [self.view addSubview:btn1];
+    [btn1 setTitle:@"提交" forState:(UIControlStateNormal)];
+    btn1.backgroundColor = [UIColor orangeColor];
+    [btn1 addTarget:self action:@selector(push) forControlEvents:(UIControlEventTouchUpInside)];
+    btn1.frame = CGRectMake(210, CGRectGetMaxY(textView.frame), 100, 100);
+    UILabel *text = [[UILabel alloc]init];
+    self.text = text;
+    [self.view addSubview:text];
+    text.frame = CGRectMake(0, 300, 300, 600);
 }
 
 - (void)openPhoto {
@@ -36,10 +49,21 @@
    
     [self presentViewController:picker animated:YES completion:nil];
 }
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo{
-    
-    
+
+- (void)push {
+    [self.textView.attributedText enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, self.textView.attributedText.length) options:0 usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+        if ([value isKindOfClass:[NSTextAttachment class]]) {
+            NSTextAttachment *textAtt = (NSTextAttachment *)value;
+            NSLog(@"%@", textAtt.image);
+        } else {
+            NSAttributedString *attrString = [self.textView.attributedText attributedSubstringFromRange:range];
+            NSString *string = attrString.string;
+            NSLog(@"%@", string);
+        }
+    }];
+  
 }
+
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     
     
